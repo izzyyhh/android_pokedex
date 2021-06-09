@@ -1,4 +1,4 @@
-package com.example.izzypokedex
+package com.example.izzypokedex.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,7 +9,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.izzypokedex.ui.theme.IzzyPokedexTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,7 +19,7 @@ class MainActivity : ComponentActivity() {
             IzzyPokedexTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    Greeting("Izzyyy")
                 }
             }
         }
@@ -33,6 +35,6 @@ fun Greeting(name: String) {
 @Composable
 fun DefaultPreview() {
     IzzyPokedexTheme {
-        Greeting("Android")
+        Greeting("Izzy")
     }
 }
