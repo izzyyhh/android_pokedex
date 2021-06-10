@@ -11,7 +11,7 @@ data class ApiPokemon(
 )
 
 data class Sprites(
-    @Json(name = "front_shiny") val frontShiny: String = "",
+    @Json(name = "front_shiny") val frontShiny: String? = "",
     val other: Other =  Other()
 )
 
@@ -21,7 +21,7 @@ data class Other(
 )
 
 data class OfficialArtwork(
-    @Json(name = "front_default") val frontDefault: String = ""
+    @Json(name = "front_default") val frontDefault: String? = ""
 )
 
 data class TypeEntry(

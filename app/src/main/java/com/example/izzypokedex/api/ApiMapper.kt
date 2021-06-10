@@ -13,8 +13,8 @@ constructor() : EntityMapper<ApiPokemon, Pokemon>{
         return Pokemon(
             id = entity.id,
             name = entity.name,
-            frontShiny = entity.sprites.frontShiny,
-            frontOfficialDefault = entity.sprites.other.officialArtwork.frontDefault,
+            frontShiny = entity.sprites.frontShiny ?: "",
+            frontOfficialDefault = entity.sprites.other.officialArtwork.frontDefault ?: "",
             types = entity.types
                 .map{
                     it.type.name

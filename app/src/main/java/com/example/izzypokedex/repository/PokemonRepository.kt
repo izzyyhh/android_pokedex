@@ -1,6 +1,10 @@
 package com.example.izzypokedex.repository
 
 import android.util.Log
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.map
 import com.example.izzypokedex.Pokemon
 import com.example.izzypokedex.api.ApiMapper
 import com.example.izzypokedex.api.PokeApi
@@ -9,10 +13,13 @@ import com.example.izzypokedex.db.daos.PokemonDao
 import com.example.izzypokedex.util.DataState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import java.lang.Exception
+import javax.inject.Inject
 
+// single source of truth: database
 class PokemonRepository
-constructor(
+@Inject constructor(
     private val pokemonDao: PokemonDao,
     private val pokeApi: PokeApi,
     private val dbMapper: DbMapper,
@@ -56,6 +63,15 @@ constructor(
         } catch (e: Exception) {
             emit(DataState.Error(e))
         }
-
     }
+
+    @ExperimentalPagingApi
+    fun getPaging(size: Int) = Pager(
+        config = PagingConfig(size),
+        pagingSourceFactory = { pokemonDao.getPaging() },
+        remoteMediator = PokemonListRemoteMediator(pokeApi = pokeApi, pokemonDao = pokemonDao, apiMapper = apiMapper, dbMapper = dbMapper)
+    ).flow.map {
+        it.map{ dbPokemon -> dbMapper.mapToDomainModel(entity = dbPokemon)}
+    }
+
 }

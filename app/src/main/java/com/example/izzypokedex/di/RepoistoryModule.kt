@@ -4,6 +4,7 @@ import com.example.izzypokedex.api.ApiMapper
 import com.example.izzypokedex.api.PokeApi
 import com.example.izzypokedex.db.DbMapper
 import com.example.izzypokedex.db.daos.PokemonDao
+import com.example.izzypokedex.repository.PokemonListRemoteMediator
 import com.example.izzypokedex.repository.PokemonRepository
 import dagger.Module
 import dagger.Provides

@@ -106,4 +106,7 @@ dependencies {
     //Dagger Hilt extensions for compose navigation
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0-alpha02'
 
+    //paging compose
+    implementation "androidx.paging:paging-compose:1.0.0-alpha10"
+
 }
