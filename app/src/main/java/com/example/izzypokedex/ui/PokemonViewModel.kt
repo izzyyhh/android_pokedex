@@ -13,10 +13,8 @@ import com.example.izzypokedex.repository.PokemonListRemoteMediator
 import com.example.izzypokedex.repository.PokemonRepository
 import com.example.izzypokedex.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,29 +32,22 @@ class PokemonViewModel
     @ExperimentalPagingApi
     val pokemon: Flow<PagingData<Pokemon>> = pokemonRepository.getPaging(20)
 
-/*    fun setStateEvent(pokemonStateEvent: PokemonStateEvent) {
+    fun setStateEvent(pokemonStateEvent: PokemonStateEvent) {
         viewModelScope.launch {
             when(pokemonStateEvent){
                 is PokemonStateEvent.GetPokemonEvent -> {
-                    pokemonRepository.getPokemons(150)
+                    pokemonRepository.getPokemons(25)
                         .onEach {
                             _dataState.postValue(it)
                         }
                         .launchIn(viewModelScope)
-
-                    //pokemonRepository.getPokemon()
-                     //   .onEach {
-                        //    _dataState.postValue(it)
-                        //}
-                       // .launchIn(viewModelScope)
                 }
             }
         }
-    }*/
+    }
 }
 
-/*
 sealed class PokemonStateEvent{
     object GetPokemonEvent: PokemonStateEvent()
     object None: PokemonStateEvent()
-}*/
+}

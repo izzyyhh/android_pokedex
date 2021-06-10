@@ -25,20 +25,17 @@ class PokemonRepository
     private val dbMapper: DbMapper,
     private val apiMapper: ApiMapper
 ){
-    suspend fun getPokemon(): Flow<DataState<List<Pokemon>>> = flow {
+    suspend fun getPokemon(pokeId: Int): Flow<DataState<Pokemon>> = flow {
         emit(DataState.Loading)
 
         try {
-            val apiPokemon = pokeApi.getPokemon(25)
+            val apiPokemon = pokeApi.getPokemon(pokeId)
             val poke = apiMapper.mapToDomainModel(apiPokemon)
             //insert into database here
             pokemonDao.insert(dbMapper.mapToEntity(poke))
-            val cachedPokes = pokemonDao.get()
-            val pokes = cachedPokes.map {
-                dbMapper.mapToDomainModel(it)
-            }
+            val cachedPoke = pokemonDao.get(pokeId)
 
-            emit(DataState.Success(pokes))
+            emit(DataState.Success(dbMapper.mapToDomainModel(cachedPoke)))
 
 
         } catch (e: Exception) {

@@ -1,13 +1,13 @@
 package com.example.izzypokedex.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -27,6 +27,7 @@ import com.example.izzypokedex.Pokemon
 import com.example.izzypokedex.util.DataState
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.imageloading.ImageLoadState
+import kotlinx.coroutines.flow.collect
 
 @ExperimentalPagingApi
 @Composable
@@ -40,7 +41,7 @@ fun PokemonListScreen(){
     LazyColumn {
         items(pokemon) {
             if(it != null ) {
-                PokemonListCard(name = it.name, image = it.frontOfficialDefault, it.id)
+                PokemonListCard(name = it.name, image = it.frontOfficialDefault, it.id, onClick = {navController.navigate("detail_screen/${it.id}")})
             }
         }
 
@@ -50,23 +51,22 @@ fun PokemonListScreen(){
             }
         }
     }
-
-/*    LaunchedEffect(key1 = "get_pokemon_list_event") {
-        viewModel.setStateEvent(PokemonStateEvent.GetPokemonEvent)
-    }*/
 }
 
 @Composable
-fun PokemonListCard(name: String, image: String, num: Int) {
+fun PokemonListCard(name: String, image: String, num: Int, onClick: () -> Unit ) {
     Card(
         modifier = Modifier
-            .height(64.dp)
-    ){
-        Row() {
+            .height(96.dp)
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .clickable { onClick() }
+                .background(MaterialTheme.colors.secondary)
+        ){
             Text(num.toString())
-            Box{
-                Text(text = name.uppercase())
-            }
+            Text(text = name.uppercase())
             Box{
                 val painter =rememberCoilPainter(request = image)
                 Image(
@@ -81,7 +81,7 @@ fun PokemonListCard(name: String, image: String, num: Int) {
     }
 }
 
-@Composable
+/*@Composable
 fun PokemonListScreen(dataState: DataState<List<Pokemon>>) {
     when(dataState) {
         is DataState.Loading -> CircularProgressIndicator(
@@ -108,5 +108,5 @@ fun PokemonListContent(pokemonList: List<Pokemon>) {
             }
         }
     }
-}
+}*/
 
