@@ -1,5 +1,8 @@
 package com.example.izzypokedex
 
+import androidx.compose.ui.graphics.Color
+import com.example.izzypokedex.ui.theme.*
+
 data class Pokemon(
     val id: Int,
     val name: String,
@@ -27,3 +30,14 @@ data class Stats(
     val specialDefense: Int = 0,
     val speed: Int = 0
 )
+
+fun Pokemon.color(): Int = when(types[0]) {
+        "grass", "bug" -> R.color.pokemon_green
+        "ground", "rock" -> R.color.pokemon_brown
+        "water", "fighting", "normal" -> R.color.pokemon_blue
+        "poison", "ghost" -> R.color.pokemon_purple
+        "electric", "psychic" -> R.color.pokemon_yellow
+        "fire" -> R.color.pokemon_red
+        "dark" -> R.color.pokemon_black
+        else -> R.color.pokemon_black
+    }

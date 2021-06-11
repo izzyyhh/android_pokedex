@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="pokemon_green">#4FC1A6</color>
+    <color name="pokemon_brown">#CA8179</color>
+    <color name="pokemon_red">#F7786B</color>
+    <color name="pokemon_black">#303943</color>
+    <color name="pokemon_blue">#429BED</color>
+    <color name="pokemon_purple">#9F5BBA</color>
+    <color name="pokemon_yellow">#D5C353</color>
 </resources>

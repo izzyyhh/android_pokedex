@@ -122,21 +122,26 @@ class PokemonRepository
     }
 
     private suspend fun getEvoChain(evoChain: ApiPokeEvoChain): List<Pokemon> {
-        val chain = mutableListOf<Int>()
-        chain.add(getIdFromUrl(evoChain.chain.species.url))
+        try {
+            val chain = mutableListOf<Int>()
+            chain.add(getIdFromUrl(evoChain.chain.species.url))
 
-        var evoData = evoChain.chain.evolvesTo
+            var evoData = evoChain.chain.evolvesTo
 
-        while (true) {
-            chain.add(getIdFromUrl(evoData[0].species.url))
+            while (true) {
+                chain.add(getIdFromUrl(evoData[0].species.url))
 
-            evoData = evoData[0].evolvesTo!!
+                evoData = evoData[0].evolvesTo!!
 
-            if(evoData.isEmpty()) break
-        }
+                if (evoData.isEmpty()) break
+            }
 
-        return chain.map{
-            apiMapper.mapToDomainModel(pokeApi.getPokemon(it))
+            return chain.map{
+                apiMapper.mapToDomainModel(pokeApi.getPokemon(it))
+            }
+
+        } catch (e: Exception) {
+            return emptyList()
         }
     }
 }

@@ -6,16 +6,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import com.example.izzypokedex.Pokemon
+import com.example.izzypokedex.color
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.imageloading.ImageLoadState
 
@@ -24,49 +32,155 @@ import com.google.accompanist.imageloading.ImageLoadState
 fun PokemonListScreen(pokemonItems: LazyPagingItems<Pokemon>, listState: LazyListState){
     val navController = LocalNavController.current
 
-    LazyColumn(
-        state = listState
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
     ) {
-        items(pokemonItems) {
-            if(it != null ) {
-                PokemonListCard(name = it.name, image = it.frontOfficialDefault, it.id, onClick = {navController.navigate("detail_screen/${it.id}")})
-            }
-        }
+        Text(
+            text = "Pokédex",
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colors.onSurface
+        )
+        Spacer(modifier = Modifier.padding(vertical = 4.dp))
+        Text(
+            text = "This Pokédex contains detailed stats for every creature from the Pokémon games.",
+            style = MaterialTheme.typography.body1.copy(
+                lineHeight = 20.sp
+            ),
+            color = MaterialTheme.colors.onBackground
+        )
+        Spacer(modifier = Modifier.padding(vertical = 4.dp))
 
-        if(pokemonItems.loadState.append is LoadState.Loading) {
-            item {
-                CircularProgressIndicator()
+        LazyColumn(
+            state = listState
+        ) {
+            items(pokemonItems) {
+                if(it != null ) {
+                    PokemonCard(pokemon = it, onClick = {navController.navigate("detail_screen/${it.id}")})
+                }
+            }
+
+            if(pokemonItems.loadState.append is LoadState.Loading) {
+                item {
+                    CircularProgressIndicator()
+                }
             }
         }
     }
 }
 
 @Composable
-fun PokemonListCard(name: String, image: String, num: Int, onClick: () -> Unit ) {
-    Card(
+fun PokemonCard(pokemon: Pokemon, onClick: () -> Unit) {
+    Column(
         modifier = Modifier
-            .height(96.dp)
+            .height(120.dp)
             .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clip(shape = RoundedCornerShape(16.dp))
     ) {
-        Row(
+        Card(
             modifier = Modifier
-                .clickable { onClick() }
-                .background(MaterialTheme.colors.secondary)
-        ){
-            Text(num.toString())
-            Text(text = name.uppercase())
-            Box{
-                val painter =rememberCoilPainter(request = image)
-                Image(
-                    painter = painter,
-                    contentDescription = name
-                )
-                if(painter.loadState is ImageLoadState.Loading) {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+                .fillMaxSize()
+                .shadow(elevation = 8.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(color = colorResource(id = pokemon.color()))
+                    .fillMaxSize()
+                    .clickable { onClick() }
+            ) {
+                Row {
+                    Spacer(modifier = Modifier.padding(horizontal = 2.dp))
+                    PokemonImage(image = pokemon.frontOfficialDefault)
+                    Box {
+                        Column(
+                            modifier = Modifier
+                                .padding(PaddingValues(start = 8.dp))
+                                .fillMaxWidth()
+                                .fillMaxHeight()
+                        ) {
+                            Spacer(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
+                            PokemonName(name = pokemon.name)
+                            Spacer(modifier = Modifier.padding(vertical = 4.dp))
+                            PokemonTypeBadges(pokemonTypes = pokemon.types)
+                        }
+                        Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(end = 8.dp)
+                        ) {
+                            PokemonNumber(pokemonId = pokemon.id)
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+fun PokemonTypeBadges(pokemonTypes: List<String>) {
+    Row{
+        pokemonTypes.map { type ->
+            Text(
+                text = type.replaceFirstChar { it.uppercase() },
+                color = MaterialTheme.colors.onPrimary.copy(alpha = 0.8f),
+                modifier = Modifier
+                    .background(
+                        color = Color.White.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = MaterialTheme.typography.body2.fontSize
+            )
+            Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+        }
+    }
+}
+
+@Composable
+fun PokemonImage(image: String) {
+    Box{
+        val painter =rememberCoilPainter(request = image)
+        Image(
+            painter = painter,
+            contentDescription = image
+        )
+        if(painter.loadState is ImageLoadState.Loading) {
+            CircularProgressIndicator(Modifier.align(Alignment.Center))
+        }
+    }
+}
+
+
+@Composable
+fun PokemonName(name: String) {
+    Text(
+        text = name.replaceFirstChar { it.uppercase() },
+        style = MaterialTheme.typography.subtitle1,
+        color = MaterialTheme.colors.onPrimary,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp
+    )
+}
+
+@Composable
+fun PokemonNumber(pokemonId: Int) {
+    val numText = when(pokemonId.toString().length) {
+        1 -> "#00$pokemonId"
+        2 -> "#0$pokemonId"
+        else -> "#$pokemonId"
+    }
+
+    Text(
+        text = numText,
+        color = Color.White.copy(alpha = 0.4f),
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 36.sp,
+        lineHeight = 0.sp
+    )
 }
 
 /*@Composable
