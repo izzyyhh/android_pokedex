@@ -1,6 +1,5 @@
 package com.example.izzypokedex.repository
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.*
 import androidx.paging.PagingConfig
@@ -10,18 +9,21 @@ import com.example.izzypokedex.PokemonSpecies
 import com.example.izzypokedex.Stats
 import com.example.izzypokedex.api.ApiMapper
 import com.example.izzypokedex.api.PokeApi
+import com.example.izzypokedex.api.getIdFromUrl
+import com.example.izzypokedex.api.models.ApiPokeEvoChain
 import com.example.izzypokedex.api.models.ApiPokemon
 import com.example.izzypokedex.api.models.ApiPokemonSpecies
+import com.example.izzypokedex.api.models.EvolvesToEntry
 import com.example.izzypokedex.db.DbMapper
 import com.example.izzypokedex.db.daos.PokemonDao
 import com.example.izzypokedex.db.daos.PokemonSpeciesDao
-import com.example.izzypokedex.db.entities.DbPokemonSpecies
 import com.example.izzypokedex.util.DataState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import java.lang.Exception
 import javax.inject.Inject
+import kotlin.Exception
 
 // single source of truth: database
 class PokemonRepository
@@ -75,6 +77,8 @@ class PokemonRepository
         try {
             val apiSpecies: ApiPokemonSpecies = pokeApi.getPokemonSpecies(id)
             val apiPoke: ApiPokemon = pokeApi.getPokemon(id)
+            val apiEvo: ApiPokeEvoChain = pokeApi.getPokeEvoChain(getIdFromUrl(apiSpecies.evolutionChain.url))
+            val chain = getEvoChain(apiEvo)
 
             emit(DataState.Success(Pokemon(
                 id = id,
@@ -98,7 +102,8 @@ class PokemonRepository
                     specialAttack = apiPoke.stats.first{ it.stat.name == "special-attack"}.baseStat,
                     specialDefense = apiPoke.stats.first{ it.stat.name == "special-defense"}.baseStat,
                     speed = apiPoke.stats.first{ it.stat.name == "speed"}.baseStat
-                )
+                ),
+                evolution = chain
 
             )))
 
@@ -115,4 +120,25 @@ class PokemonRepository
     ).flow.map {
         it.map{ dbPokemon -> dbMapper.mapToDomainModel(entity = dbPokemon)}
     }
+
+    private suspend fun getEvoChain(evoChain: ApiPokeEvoChain): List<Pokemon> {
+        val chain = mutableListOf<Int>()
+        chain.add(getIdFromUrl(evoChain.chain.species.url))
+
+        var evoData = evoChain.chain.evolvesTo
+
+        while (true) {
+            chain.add(getIdFromUrl(evoData[0].species.url))
+
+            evoData = evoData[0].evolvesTo!!
+
+            if(evoData.isEmpty()) break
+        }
+
+        return chain.map{
+            apiMapper.mapToDomainModel(pokeApi.getPokemon(it))
+        }
+    }
 }
+
+

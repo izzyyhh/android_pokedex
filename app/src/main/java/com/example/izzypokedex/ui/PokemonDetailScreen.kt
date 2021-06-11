@@ -35,7 +35,7 @@ fun PokemonDetailScreen(dataState: DataState<Pokemon>) = when(dataState) {
             .fillMaxSize()
             .wrapContentSize(align = Alignment.Center)
     )
-    is DataState.Error -> Text(text= "error")
+    is DataState.Error -> Text(text= dataState.exception.toString())
     is DataState.Success<Pokemon> -> PokemonDetailContent(pokemon = dataState.data)
 }
 
@@ -57,5 +57,8 @@ fun PokemonDetailContent(pokemon: Pokemon) {
         Text(text = pokemon.stats.specialAttack.toString())
         Text(text = pokemon.stats.specialDefense.toString())
         Text(text = pokemon.stats.speed.toString())
+        pokemon.evolution.forEach { 
+            Text(text = it.toString())
+        }
     }
 }

@@ -10,7 +10,8 @@ data class Pokemon(
     val species: PokemonSpecies = PokemonSpecies(),
     val height: Int = 0,
     val weight: Int = 0,
-    val stats: Stats =  Stats()
+    val stats: Stats =  Stats(),
+    val evolution: List<Pokemon> = emptyList()
 )
 
 data class PokemonSpecies(

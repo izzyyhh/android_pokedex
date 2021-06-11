@@ -1,6 +1,7 @@
 package com.example.izzypokedex.api
 
 import com.example.izzypokedex.Pokemon
+import com.example.izzypokedex.Stats
 import com.example.izzypokedex.api.models.ApiPokemon
 import com.example.izzypokedex.util.EntityMapper
 import javax.inject.Inject

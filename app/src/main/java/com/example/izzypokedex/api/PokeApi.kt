@@ -1,5 +1,6 @@
 package com.example.izzypokedex.api
 
+import com.example.izzypokedex.api.models.ApiPokeEvoChain
 import com.example.izzypokedex.api.models.ApiPokemon
 import com.example.izzypokedex.api.models.ApiPokemonListResponse
 import com.example.izzypokedex.api.models.ApiPokemonSpecies
@@ -16,4 +17,12 @@ interface PokeApi {
 
     @GET("pokemon-species/{id}")
     suspend fun getPokemonSpecies(@Path("id") id: Int) : ApiPokemonSpecies
+
+    @GET("evolution-chain/{id}")
+    suspend fun getPokeEvoChain(@Path("id") evoChainId: Int) : ApiPokeEvoChain
+}
+
+fun getIdFromUrl(url: String): Int {
+    val splittedUrl = url.split("/")
+    return splittedUrl[splittedUrl.size - 2].toInt()
 }

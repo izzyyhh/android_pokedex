@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.izzypokedex.api.ApiMapper
 import com.example.izzypokedex.api.PokeApi
+import com.example.izzypokedex.api.getIdFromUrl
 import com.example.izzypokedex.db.DbMapper
 import com.example.izzypokedex.db.daos.PokemonDao
 import com.example.izzypokedex.db.entities.DbPokemon
@@ -44,8 +45,7 @@ class PokemonListRemoteMediator @Inject constructor(
         // insert new data into db
         coroutineScope {
             val apiPokes = apiListInfo.results.map {
-                val splittedUrl = it.url.split("/")
-                val pokeId = splittedUrl[splittedUrl.size - 2].toInt()
+                val pokeId = getIdFromUrl(it.url)
                 pokeApi.getPokemon(pokeId)
             }
 
@@ -73,3 +73,4 @@ class PokemonListRemoteMediator @Inject constructor(
         }
     }
 }
+
