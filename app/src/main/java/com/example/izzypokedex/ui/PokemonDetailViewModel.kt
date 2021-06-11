@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.*
 import com.example.izzypokedex.Pokemon
+import com.example.izzypokedex.api.models.ApiPokemonSpecies
 import com.example.izzypokedex.db.DbMapper
 import com.example.izzypokedex.db.PokemonDatabase
 import com.example.izzypokedex.db.daos.PokemonDao
@@ -31,10 +32,11 @@ class PokemonDetailViewModel
         when(event) {
             is PokemonDetailEvent.GetPokemonEvent -> {
                 viewModelScope.launch {
-                    pokemonRepository.getPokemon(event.id)
+                    pokemonRepository.getDetailPokemon(event.id)
                         .onEach {
                             _dataState.postValue(it)
                         }.launchIn(viewModelScope)
+
                 }
             }
         }
@@ -44,3 +46,4 @@ class PokemonDetailViewModel
 sealed class PokemonDetailEvent {
     data class GetPokemonEvent(val id: Int): PokemonDetailEvent()
 }
+

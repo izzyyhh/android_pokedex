@@ -46,6 +46,16 @@ fun PokemonDetailContent(pokemon: Pokemon) {
         Row {
             Text(text = pokemon.name)
             Text(text = pokemon.id.toString())
+            Text(text = pokemon.species.color)
         }
+        Text(text = pokemon.species.text)
+        Text(text = pokemon.height.toString())
+        Text(text = pokemon.weight.toString())
+        Text(text = pokemon.stats.hp.toString())
+        Text(text = pokemon.stats.attack.toString())
+        Text(text = pokemon.stats.defense.toString())
+        Text(text = pokemon.stats.specialAttack.toString())
+        Text(text = pokemon.stats.specialDefense.toString())
+        Text(text = pokemon.stats.speed.toString())
     }
 }

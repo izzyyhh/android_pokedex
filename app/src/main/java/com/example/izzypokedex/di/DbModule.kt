@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.izzypokedex.db.PokemonDatabase
 import com.example.izzypokedex.db.daos.PokemonDao
+import com.example.izzypokedex.db.daos.PokemonSpeciesDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,4 +25,8 @@ object DbModule {
     @Singleton
     @Provides
     fun providePokemonDao(pokemonDatabase: PokemonDatabase) : PokemonDao = pokemonDatabase.dao()
+
+    @Singleton
+    @Provides
+    fun providePokemonSpeciesDao(pokemonDatabase: PokemonDatabase) : PokemonSpeciesDao = pokemonDatabase.speciesDao()
 }
