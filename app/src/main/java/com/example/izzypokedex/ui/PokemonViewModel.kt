@@ -30,7 +30,7 @@ class PokemonViewModel
     val dataState: LiveData<DataState<List<Pokemon>>> = _dataState
 
     @ExperimentalPagingApi
-    val pokemon: Flow<PagingData<Pokemon>> = pokemonRepository.getPaging(20)
+    val pokemon: Flow<PagingData<Pokemon>> = pokemonRepository.getPaging(25).cachedIn(viewModelScope)
 
     fun setStateEvent(pokemonStateEvent: PokemonStateEvent) {
         viewModelScope.launch {

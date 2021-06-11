@@ -36,7 +36,7 @@ class PokemonListRemoteMediator @Inject constructor(
         val apiListInfo = pokeApi.getPokemonList(
             limit = when(loadType) {
                 LoadType.REFRESH -> state.config.initialLoadSize
-                else -> state.config.initialLoadSize
+                else -> state.config.pageSize
             },
             offset = offset
         )

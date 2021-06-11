@@ -5,47 +5,35 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
-import androidx.paging.PagingState
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import com.example.izzypokedex.Pokemon
-import com.example.izzypokedex.util.DataState
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.imageloading.ImageLoadState
-import kotlinx.coroutines.flow.collect
 
 @ExperimentalPagingApi
 @Composable
-fun PokemonListScreen(){
+fun PokemonListScreen(pokemonItems: LazyPagingItems<Pokemon>, listState: LazyListState){
     val navController = LocalNavController.current
 
-    val viewModel: PokemonViewModel = hiltViewModel()
-    val state = viewModel.dataState.observeAsState(DataState.Loading).value
-    val pokemon = viewModel.pokemon.collectAsLazyPagingItems()
-
-    LazyColumn {
-        items(pokemon) {
+    LazyColumn(
+        state = listState
+    ) {
+        items(pokemonItems) {
             if(it != null ) {
                 PokemonListCard(name = it.name, image = it.frontOfficialDefault, it.id, onClick = {navController.navigate("detail_screen/${it.id}")})
             }
         }
 
-        if(pokemon.loadState.append is LoadState) {
+        if(pokemonItems.loadState.append is LoadState.Loading) {
             item {
                 CircularProgressIndicator()
             }

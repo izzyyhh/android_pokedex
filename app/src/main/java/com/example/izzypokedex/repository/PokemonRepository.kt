@@ -2,7 +2,7 @@ package com.example.izzypokedex.repository
 
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
+import androidx.paging.*
 import androidx.paging.PagingConfig
 import androidx.paging.map
 import com.example.izzypokedex.Pokemon
@@ -63,12 +63,11 @@ class PokemonRepository
     }
 
     @ExperimentalPagingApi
-    fun getPaging(size: Int) = Pager(
-        config = PagingConfig(size),
+    fun getPaging(size: Int): Flow<PagingData<Pokemon>> = Pager(
+        config = PagingConfig(pageSize = size),
         pagingSourceFactory = { pokemonDao.getPaging() },
         remoteMediator = PokemonListRemoteMediator(pokeApi = pokeApi, pokemonDao = pokemonDao, apiMapper = apiMapper, dbMapper = dbMapper)
     ).flow.map {
         it.map{ dbPokemon -> dbMapper.mapToDomainModel(entity = dbPokemon)}
     }
-
 }
