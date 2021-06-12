@@ -34,8 +34,6 @@ import com.google.accompanist.imageloading.ImageLoadState
 @ExperimentalPagingApi
 @Composable
 fun PokemonListScreen(pokemonItems: LazyPagingItems<Pokemon>, listState: LazyListState){
-    val navController = LocalNavController.current
-
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -56,18 +54,43 @@ fun PokemonListScreen(pokemonItems: LazyPagingItems<Pokemon>, listState: LazyLis
         )
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
 
-        LazyColumn(
-            state = listState
-        ) {
-            items(pokemonItems) {
-                if(it != null ) {
-                    PokemonCard(pokemon = it, onClick = {navController.navigate("detail_screen/${it.id}")})
+        when(pokemonItems.loadState.refresh) {
+            LoadState.Loading -> {
+                LinearProgressIndicator(
+                    color = MaterialTheme.colors.onSurface,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            else -> {
+                PokemonLazyList(listState = listState, pokemonItems = pokemonItems )
+            }
+        }
+    }
+}
+
+@Composable
+fun PokemonLazyList(listState: LazyListState, pokemonItems: LazyPagingItems<Pokemon> ) {
+    val navController = LocalNavController.current
+
+    LazyColumn(
+        state = listState
+    ) {
+        items(pokemonItems) {
+            if(it != null ) {
+                PokemonCard(pokemon = it, onClick = {navController.navigate("detail_screen/${it.id}")})
+            }
+        }
+
+        if(pokemonItems.loadState.append is LoadState.Loading) {
+            item {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    CircularProgressIndicator(strokeWidth = 4.dp, color = MaterialTheme.colors.onSurface)
                 }
             }
-
-            if(pokemonItems.loadState.append is LoadState.Loading) {
-                item {
-                    CircularProgressIndicator()
+        } else {
+            item {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Text(text = "Something unexepected happened")
                 }
             }
         }
