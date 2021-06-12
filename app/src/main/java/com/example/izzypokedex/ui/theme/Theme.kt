@@ -14,9 +14,9 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
+    primary = PokedexRed,
     primaryVariant = Purple700,
-    secondary = Teal200,
+    secondary = Color.DarkGray,
     onSurface = PokedexRed,
     onBackground = TextGray,
     onPrimary = Color.White

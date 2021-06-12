@@ -42,7 +42,7 @@ fun PokemonListScreen(pokemonItems: LazyPagingItems<Pokemon>, listState: LazyLis
             text = "Pokédex",
             style = MaterialTheme.typography.h4,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colors.onSurface
+            color = MaterialTheme.colors.primary
         )
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
         Text(
@@ -87,12 +87,6 @@ fun PokemonLazyList(listState: LazyListState, pokemonItems: LazyPagingItems<Poke
                     CircularProgressIndicator(strokeWidth = 4.dp, color = MaterialTheme.colors.onSurface)
                 }
             }
-        } else {
-            item {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    Text(text = "Something unexepected happened")
-                }
-            }
         }
     }
 }
@@ -128,16 +122,16 @@ fun PokemonCard(pokemon: Pokemon, onClick: () -> Unit) {
                                 .fillMaxHeight()
                         ) {
                             Spacer(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
-                            PokemonName(name = pokemon.name)
+                            PokemonName(name = pokemon.name, fontSize = 24)
                             Spacer(modifier = Modifier.padding(vertical = 4.dp))
-                            PokemonTypeBadges(pokemonTypes = pokemon.types)
+                            PokemonTypeBadges(pokemonTypes = pokemon.types, verticalPadding = 2, horizontalPadding = 12)
                         }
                         Box(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(end = 8.dp)
                         ) {
-                            PokemonNumber(pokemonId = pokemon.id, alpha = 0.4f)
+                            PokemonNumber(pokemonId = pokemon.id, alpha = 0.4f, fontSize = 32)
                         }
                     }
                 }

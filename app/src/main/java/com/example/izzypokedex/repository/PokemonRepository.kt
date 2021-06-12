@@ -103,8 +103,9 @@ class PokemonRepository
                     specialDefense = apiPoke.stats.first{ it.stat.name == "special-defense"}.baseStat,
                     speed = apiPoke.stats.first{ it.stat.name == "speed"}.baseStat
                 ),
-                evolution = chain
-
+                evolution = chain,
+                happiness = apiSpecies.happiness,
+                captureRate = apiSpecies.captureRate
             )))
 
         } catch (e: Exception) {

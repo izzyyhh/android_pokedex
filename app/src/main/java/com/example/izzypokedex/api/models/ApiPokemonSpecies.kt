@@ -5,7 +5,9 @@ import com.squareup.moshi.Json
 data class ApiPokemonSpecies(
     @Json(name="evolution_chain") val evolutionChain : EvolutionChain,
     @Json(name="flavor_text_entries") val textEntries : List<TextEntry>,
-    val color: Color
+    @Json(name = "base_happiness") val happiness: Int,
+    @Json(name = "capture_rate") val captureRate: Int,
+    val color: Color,
 )
 
 data class EvolutionChain(
