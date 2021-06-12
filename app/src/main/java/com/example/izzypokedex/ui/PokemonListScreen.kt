@@ -24,6 +24,10 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import com.example.izzypokedex.Pokemon
 import com.example.izzypokedex.color
+import com.example.izzypokedex.ui.shared.PokemonImage
+import com.example.izzypokedex.ui.shared.PokemonName
+import com.example.izzypokedex.ui.shared.PokemonNumber
+import com.example.izzypokedex.ui.shared.PokemonTypeBadges
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.imageloading.ImageLoadState
 
@@ -110,77 +114,13 @@ fun PokemonCard(pokemon: Pokemon, onClick: () -> Unit) {
                             .align(Alignment.BottomEnd)
                             .padding(end = 8.dp)
                         ) {
-                            PokemonNumber(pokemonId = pokemon.id)
+                            PokemonNumber(pokemonId = pokemon.id, alpha = 0.4f)
                         }
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-fun PokemonTypeBadges(pokemonTypes: List<String>) {
-    Row{
-        pokemonTypes.map { type ->
-            Text(
-                text = type.replaceFirstChar { it.uppercase() },
-                color = MaterialTheme.colors.onPrimary.copy(alpha = 0.8f),
-                modifier = Modifier
-                    .background(
-                        color = Color.White.copy(alpha = 0.2f),
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.body2.fontSize
-            )
-            Spacer(modifier = Modifier.padding(horizontal = 4.dp))
-        }
-    }
-}
-
-@Composable
-fun PokemonImage(image: String) {
-    Box{
-        val painter =rememberCoilPainter(request = image)
-        Image(
-            painter = painter,
-            contentDescription = image
-        )
-        if(painter.loadState is ImageLoadState.Loading) {
-            CircularProgressIndicator(Modifier.align(Alignment.Center))
-        }
-    }
-}
-
-
-@Composable
-fun PokemonName(name: String) {
-    Text(
-        text = name.replaceFirstChar { it.uppercase() },
-        style = MaterialTheme.typography.subtitle1,
-        color = MaterialTheme.colors.onPrimary,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp
-    )
-}
-
-@Composable
-fun PokemonNumber(pokemonId: Int) {
-    val numText = when(pokemonId.toString().length) {
-        1 -> "#00$pokemonId"
-        2 -> "#0$pokemonId"
-        else -> "#$pokemonId"
-    }
-
-    Text(
-        text = numText,
-        color = Color.White.copy(alpha = 0.4f),
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 36.sp,
-        lineHeight = 0.sp
-    )
 }
 
 /*@Composable
