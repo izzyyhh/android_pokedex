@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -193,14 +194,14 @@ fun PokemonAbout(pokemon: Pokemon) {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth(0.6f)
         ) {
-            Column() {
+            Column {
                 Text("Height", fontWeight = FontWeight.Bold, color = MaterialTheme.colors.secondary)
                 Text("Weight", fontWeight = FontWeight.Bold, color = MaterialTheme.colors.secondary)
                 Text("Happiness", fontWeight = FontWeight.Bold, color = MaterialTheme.colors.secondary)
                 Text("Capture Rate", fontWeight = FontWeight.Bold, color = MaterialTheme.colors.secondary)
             }
 
-            Column() {
+            Column {
                 Text(text = (pokemon.height * 10).toString() + "cm", fontWeight = FontWeight.Bold)
                 Text(text = (pokemon.weight / 10.0).toString() + "kg", fontWeight = FontWeight.Bold)
                 Text(text = pokemon.happiness.toString(), fontWeight = FontWeight.Bold)
@@ -305,7 +306,8 @@ fun PokemonStats(pokemon: Pokemon) {
         totalProgress = if(pokemonTotal / 600f > 1f) 1f else pokemonTotal / 600f
     }
 
-    Column() {
+    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+    Column {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
@@ -321,79 +323,34 @@ fun PokemonStats(pokemon: Pokemon) {
             }
 
             Column() {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = pokemon.stats.hp.toString(), fontWeight = FontWeight.Bold)
-
-                    LinearProgressIndicator(
-                        color = MaterialTheme.colors.primary,
-                        progress = hpTransition
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = pokemon.stats.attack.toString(), fontWeight = FontWeight.Bold)
-
-                    LinearProgressIndicator(
-                        color = MaterialTheme.colors.primary,
-                        progress = attTransition
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = pokemon.stats.defense.toString(), fontWeight = FontWeight.Bold)
-
-                    LinearProgressIndicator(
-                        color = MaterialTheme.colors.primary,
-                        progress = defTransition
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = pokemon.stats.specialAttack.toString(), fontWeight = FontWeight.Bold)
-
-                    LinearProgressIndicator(
-                        color = MaterialTheme.colors.primary,
-                        progress = spAttTransition
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = pokemon.stats.specialDefense.toString(), fontWeight = FontWeight.Bold)
-
-                    LinearProgressIndicator(
-                        color = MaterialTheme.colors.primary,
-                        progress = spDefTransition
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = pokemon.stats.speed.toString(), fontWeight = FontWeight.Bold)
-                    LinearProgressIndicator(
-                        color = MaterialTheme.colors.primary,
-                        progress = speedTransition
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = pokemonTotal.toString(), fontWeight = FontWeight.Bold)
-
-                    LinearProgressIndicator(
-                        color = MaterialTheme.colors.primary,
-                        progress = totalTransition
-                    )
-                }
+                StatBar(indicatorProgress = hpTransition, text = pokemon.stats.hp.toString())
+                StatBar(indicatorProgress = attTransition, text = pokemon.stats.attack.toString())
+                StatBar(indicatorProgress = defTransition, text = pokemon.stats.defense.toString())
+                StatBar(indicatorProgress = spAttTransition, text = pokemon.stats.specialAttack.toString())
+                StatBar(indicatorProgress = spDefTransition, text = pokemon.stats.specialDefense.toString())
+                StatBar(indicatorProgress = speedTransition, text = pokemon.stats.speed.toString())
+                StatBar(indicatorProgress = totalTransition, text = pokemonTotal.toString())
             }
         }
     }
 }
+
+@Composable
+fun StatBar(indicatorProgress: Float, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(text = text, fontWeight = FontWeight.Bold, modifier = Modifier.width(36.dp), textAlign = TextAlign.End)
+
+        LinearProgressIndicator(
+            color = MaterialTheme.colors.primary,
+            progress = indicatorProgress
+        )
+    }
+}
+
 
 /*
 Text(text = "detail")
