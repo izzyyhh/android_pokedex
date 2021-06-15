@@ -4,6 +4,7 @@ import android.view.Surface
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.navArgument
 import com.example.izzypokedex.Pokemon
 import com.example.izzypokedex.color
 import com.example.izzypokedex.ui.shared.PokemonImage
@@ -184,6 +186,12 @@ fun PokemonDetail(pokemon: Pokemon) {
     }
 }
 
+private enum class Section(val heading: String) {
+    About("About"),
+    Stats("Stats"),
+    Evolution("Evolution")
+}
+
 @Composable
 fun PokemonAbout(pokemon: Pokemon) {
     Column() {
@@ -211,15 +219,22 @@ fun PokemonAbout(pokemon: Pokemon) {
     }
 }
 
-private enum class Section(val heading: String) {
-    About("About"),
-    Stats("Stats"),
-    Evolution("Evolution")
-}
-
 @Composable
 fun PokemonEvolution(pokemon: Pokemon) {
+    val navController = LocalNavController.current
 
+    Text(text = "This pokemon has these evolution stages.")
+    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+    
+    LazyColumn {
+        pokemon.evolution.filter { it.id != pokemon.id }.forEach { evoPoke ->
+            item {
+                PokemonCard(pokemon = evoPoke) {
+                    navController.navigate("detail_screen/${evoPoke.id}")
+                }
+            }
+        }
+    }
 }
 
 @Composable
