@@ -107,7 +107,7 @@ fun PokemonCard(pokemon: Pokemon, onClick: () -> Unit) {
         ) {
             Box(
                 modifier = Modifier
-                    .background(color = colorResource(id = pokemon.color()))
+                    .background(color = pokemon.color())
                     .fillMaxSize()
                     .clickable { onClick() }
             ) {

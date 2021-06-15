@@ -33,13 +33,13 @@ data class Stats(
     val speed: Int = 0
 )
 
-fun Pokemon.color(): Int = when(types[0]) {
-        "grass", "bug" -> R.color.pokemon_green
-        "ground", "rock" -> R.color.pokemon_brown
-        "water", "fighting", "normal" -> R.color.pokemon_blue
-        "poison", "ghost" -> R.color.pokemon_purple
-        "electric", "psychic" -> R.color.pokemon_yellow
-        "fire" -> R.color.pokemon_red
-        "dark" -> R.color.pokemon_black
-        else -> R.color.pokemon_black
+fun Pokemon.color(): Color = when(types[0]) {
+        "grass", "bug" -> PokeGreen
+        "ground", "rock" -> PokeBrown
+        "water", "fighting", "normal" -> PokeBlue
+        "poison", "ghost" -> PokePurple
+        "electric", "psychic" -> PokeYellow
+        "fire" -> PokeRed
+        "dark" -> PokeBlack
+        else -> PokeBlack
     }

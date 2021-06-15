@@ -65,7 +65,7 @@ fun PokemonDetailContent(pokemon: Pokemon) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = pokemon.color()))
+            .background(color = pokemon.color())
     ) {
         PokemonDetailWrapper(pokemon = pokemon)
     }
@@ -157,12 +157,12 @@ fun PokemonDetail(pokemon: Pokemon) {
                         .width(100.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = MaterialTheme.colors.surface,
-                        contentColor = colorResource(id = pokemon.color())),
+                        contentColor =  pokemon.color()),
                     elevation = ButtonDefaults.elevation(defaultElevation = 8.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp)
                 ) {
                     if(it == section) {
-                        Text(text = it.heading, color = colorResource(id = pokemon.color()))
+                        Text(text = it.heading, color = pokemon.color())
                     } else {
                         Text(text = it.heading, color = MaterialTheme.colors.onBackground, fontWeight = FontWeight.Bold)
                     }
@@ -173,7 +173,7 @@ fun PokemonDetail(pokemon: Pokemon) {
 
         Text(
             text = section.heading,
-            color = colorResource(id = pokemon.color()),
+            color = pokemon.color(),
             style = MaterialTheme.typography.h5,
             fontWeight = FontWeight.Bold
         )
