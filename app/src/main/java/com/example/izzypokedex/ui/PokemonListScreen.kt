@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +44,7 @@ import com.example.izzypokedex.ui.shared.PokemonTypeBadges
 @ExperimentalPagingApi
 @Composable
 fun PokemonListScreen(pokemonItems: LazyPagingItems<Pokemon>, listState: LazyListState){
-    var query: String by remember { mutableStateOf("") }
+    var query: String by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -152,7 +153,7 @@ fun PokemonList(listState: LazyListState, pokemonItems: LazyPagingItems<Pokemon>
 
         } else {
             // if query then show queried pokes
-            val pokeSearchResult = pokemonItems.snapshot().filter { pokemon -> pokemon != null && pokemon.name.contains(query.trim()) }
+            val pokeSearchResult = pokemonItems.snapshot().filter { pokemon -> pokemon != null && pokemon.name.contains(query.trim().lowercase()) }
 
             items(pokeSearchResult) {
                 if(it != null) {
