@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
             }
 
             IzzyPokedexTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     Navigation()
                 }

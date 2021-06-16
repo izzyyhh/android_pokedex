@@ -21,6 +21,7 @@ private val LightColorPalette = lightColors(
     onSurface = PokedexRed,
     background = Color.White,
     onBackground = TextGray,
+    surface = SurfaceGray
 
     /* Other default colors to override
     background = Color.White,
