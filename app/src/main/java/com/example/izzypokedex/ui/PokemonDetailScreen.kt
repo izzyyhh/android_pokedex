@@ -3,11 +3,18 @@ package com.example.izzypokedex.ui
 import android.view.Surface
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.AlignHorizontalLeft
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.SwitchLeft
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -67,7 +74,30 @@ fun PokemonDetailContent(pokemon: Pokemon) {
             .fillMaxSize()
             .background(color = pokemon.color())
     ) {
+        PokemonDetailTopAppBar()
         PokemonDetailWrapper(pokemon = pokemon)
+    }
+}
+
+@Composable
+fun PokemonDetailTopAppBar() {
+    val navController = LocalNavController.current
+
+    Row(
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ){
+        Icon(
+            imageVector = Icons.Filled.West, "Back",
+            modifier = Modifier.clickable { navController.popBackStack() },
+            tint = MaterialTheme.colors.background
+        )
+        Icon(
+            imageVector = Icons.Default.CatchingPokemon, "Pokedex",
+            modifier = Modifier.clickable { navController.navigate("list_screen")},
+            tint = MaterialTheme.colors.background
+        )
     }
 }
 
@@ -99,7 +129,7 @@ fun PokemonDetailWrapper(pokemon: Pokemon) {
             modifier = Modifier
                 .fillMaxHeight(0.5f)
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .padding(bottom = 16.dp, start = 24.dp, end = 24.dp)
 
         ) {
             Row(
@@ -156,7 +186,7 @@ fun PokemonDetail(pokemon: Pokemon) {
                     modifier = Modifier
                         .width(100.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.surface,
+                        backgroundColor = MaterialTheme.colors.background,
                         contentColor =  pokemon.color()),
                     elevation = ButtonDefaults.elevation(defaultElevation = 8.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp)
