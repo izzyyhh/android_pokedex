@@ -19,7 +19,7 @@ interface PokemonDao {
     suspend fun size(): Int
 
     @Query("SELECT * FROM pokemon WHERE id = :id")
-    suspend fun get(id: Int): DbPokemon
+    suspend fun get(id: Int): DbPokemon?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg pokemon: DbPokemon)

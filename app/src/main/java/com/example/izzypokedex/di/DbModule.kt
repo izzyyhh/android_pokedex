@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.izzypokedex.db.PokemonDatabase
 import com.example.izzypokedex.db.daos.PokemonDao
+import com.example.izzypokedex.db.daos.PokemonEvoDao
 import com.example.izzypokedex.db.daos.PokemonSpeciesDao
 import dagger.Module
 import dagger.Provides
@@ -18,7 +19,7 @@ object DbModule {
     @Singleton
     @Provides
     fun database(@ApplicationContext context: Context) : PokemonDatabase = Room
-        .databaseBuilder(context, PokemonDatabase::class.java, PokemonDatabase.DATABSE_NAME)
+        .databaseBuilder(context, PokemonDatabase::class.java, PokemonDatabase.DATABASE_NAME)
         .fallbackToDestructiveMigration()
         .build()
 
@@ -29,4 +30,8 @@ object DbModule {
     @Singleton
     @Provides
     fun providePokemonSpeciesDao(pokemonDatabase: PokemonDatabase) : PokemonSpeciesDao = pokemonDatabase.speciesDao()
+
+    @Singleton
+    @Provides
+    fun providePokemonEvoDao(pokemonDatabase: PokemonDatabase) : PokemonEvoDao = pokemonDatabase.evoDao()
 }

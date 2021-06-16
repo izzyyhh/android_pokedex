@@ -8,6 +8,7 @@ data class ApiPokemonSpecies(
     @Json(name = "base_happiness") val happiness: Int,
     @Json(name = "capture_rate") val captureRate: Int,
     val color: Color,
+    val id: Int
 )
 
 data class EvolutionChain(

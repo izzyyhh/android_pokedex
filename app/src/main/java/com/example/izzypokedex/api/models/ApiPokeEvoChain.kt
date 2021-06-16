@@ -3,7 +3,8 @@ package com.example.izzypokedex.api.models
 import com.squareup.moshi.Json
 
 data class ApiPokeEvoChain(
-    val chain: EvoChain
+    val chain: EvoChain,
+    val id: Int
 )
 
 data class EvoChain(

@@ -8,5 +8,6 @@ data class DbPokemonSpecies(
     @PrimaryKey(autoGenerate = false)
     val id: Int,
     val text: String,
-    val color: String
+    val color: String,
+    val evoChainId: Int,
 )

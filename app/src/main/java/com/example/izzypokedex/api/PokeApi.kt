@@ -1,5 +1,6 @@
 package com.example.izzypokedex.api
 
+import com.example.izzypokedex.Pokemon
 import com.example.izzypokedex.api.models.ApiPokeEvoChain
 import com.example.izzypokedex.api.models.ApiPokemon
 import com.example.izzypokedex.api.models.ApiPokemonListResponse
@@ -25,4 +26,26 @@ interface PokeApi {
 fun getIdFromUrl(url: String): Int {
     val splittedUrl = url.split("/")
     return splittedUrl[splittedUrl.size - 2].toInt()
+}
+
+fun getEvoChain(evoChain: ApiPokeEvoChain): List<Int> {
+    try {
+        val chain = mutableListOf<Int>()
+        chain.add(getIdFromUrl(evoChain.chain.species.url))
+
+        var evoData = evoChain.chain.evolvesTo
+
+        while (true) {
+            chain.add(getIdFromUrl(evoData[0].species.url))
+
+            evoData = evoData[0].evolvesTo!!
+
+            if (evoData.isEmpty()) break
+        }
+
+        return chain
+
+    } catch (e: Exception) {
+        return emptyList()
+    }
 }

@@ -13,13 +13,14 @@ import com.example.izzypokedex.api.getIdFromUrl
 import com.example.izzypokedex.api.models.ApiPokeEvoChain
 import com.example.izzypokedex.api.models.ApiPokemon
 import com.example.izzypokedex.api.models.ApiPokemonSpecies
-import com.example.izzypokedex.api.models.EvolvesToEntry
 import com.example.izzypokedex.db.DbMapper
 import com.example.izzypokedex.db.daos.PokemonDao
+import com.example.izzypokedex.db.daos.PokemonEvoDao
 import com.example.izzypokedex.db.daos.PokemonSpeciesDao
+import com.example.izzypokedex.db.entities.DbEvoChain
+import com.example.izzypokedex.db.entities.DbPokemon
 import com.example.izzypokedex.util.DataState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -32,20 +33,21 @@ class PokemonRepository
     private val pokeApi: PokeApi,
     private val dbMapper: DbMapper,
     private val apiMapper: ApiMapper,
-    private val pokemonSpeciesDao: PokemonSpeciesDao
+    private val pokemonSpeciesDao: PokemonSpeciesDao,
+    private val pokemonEvoDao: PokemonEvoDao
 ){
     suspend fun getPokemon(pokeId: Int): Flow<DataState<Pokemon>> = flow {
         emit(DataState.Loading)
 
         try {
-            val apiPokemon = pokeApi.getPokemon(pokeId)
-            val poke = apiMapper.mapToDomainModel(apiPokemon)
-            //insert into database here
-            pokemonDao.insert(dbMapper.mapToEntity(poke))
-            val cachedPoke = pokemonDao.get(pokeId)
-
-            emit(DataState.Success(dbMapper.mapToDomainModel(cachedPoke)))
-
+            if(pokeNeedsToBeFetched(pokeId)) {
+                val apiPokemon = pokeApi.getPokemon(pokeId)
+                val poke = apiMapper.mapToDomainModel(apiPokemon)
+                //insert into database here
+                pokemonDao.insert(dbMapper.mapToEntity(poke))
+            } else {
+                emit(DataState.Success(dbMapper.mapToDomainModel(pokemonDao.get(pokeId) as DbPokemon)))
+            }
 
         } catch (e: Exception) {
             emit(DataState.Error(e))
@@ -76,9 +78,13 @@ class PokemonRepository
 
         try {
             val apiSpecies: ApiPokemonSpecies = pokeApi.getPokemonSpecies(id)
+            val evoChainId = getIdFromUrl(apiSpecies.evolutionChain.url)
+            //save species
+            pokemonSpeciesDao.insert(apiMapper.mapApiSpeciesToDbSpecies(apiSpecies))
+
             val apiPoke: ApiPokemon = pokeApi.getPokemon(id)
-            val apiEvo: ApiPokeEvoChain = pokeApi.getPokeEvoChain(getIdFromUrl(apiSpecies.evolutionChain.url))
-            val chain = getEvoChain(apiEvo)
+
+            val evoChain = if(evoNeedsToBeFetched(evoChainId)) fetchAndPersistEvoChain(evoChainId) else getEvoChainFromDb(evoChainId)
 
             emit(DataState.Success(Pokemon(
                 id = id,
@@ -103,11 +109,10 @@ class PokemonRepository
                     specialDefense = apiPoke.stats.first{ it.stat.name == "special-defense"}.baseStat,
                     speed = apiPoke.stats.first{ it.stat.name == "speed"}.baseStat
                 ),
-                evolution = chain,
+                evolution = evoChain,
                 happiness = apiSpecies.happiness,
                 captureRate = apiSpecies.captureRate
             )))
-
         } catch (e: Exception) {
             emit(DataState.Error(e))
         }
@@ -122,12 +127,15 @@ class PokemonRepository
         it.map{ dbPokemon -> dbMapper.mapToDomainModel(entity = dbPokemon)}
     }
 
-    private suspend fun getEvoChain(evoChain: ApiPokeEvoChain): List<Pokemon> {
+    private suspend fun fetchAndPersistEvoChain(evoChainId: Int): List<Pokemon> {
+        val apiEvo: ApiPokeEvoChain = pokeApi.getPokeEvoChain(evoChainId)
+        pokemonEvoDao.insert(apiMapper.mapApiEvoToDbEvo(apiEvo))
+
         try {
             val chain = mutableListOf<Int>()
-            chain.add(getIdFromUrl(evoChain.chain.species.url))
+            chain.add(getIdFromUrl(apiEvo.chain.species.url))
 
-            var evoData = evoChain.chain.evolvesTo
+            var evoData = apiEvo.chain.evolvesTo
 
             while (true) {
                 chain.add(getIdFromUrl(evoData[0].species.url))
@@ -145,6 +153,35 @@ class PokemonRepository
             return emptyList()
         }
     }
+
+    private suspend fun getEvoChainFromDb(evoChainId: Int): List<Pokemon> {
+        val evoChain: DbEvoChain = pokemonEvoDao.get(evoChainId)
+        val evoChainList = listOfNotNull(
+            evoChain.stage1,
+            evoChain.stage2,
+            evoChain.stage3
+        )
+
+        evoChainList.forEach {
+            if (pokeNeedsToBeFetched(it)) {
+                fetchAndPersistPokemon(it)
+            }
+        }
+
+        return evoChainList.map {
+            dbMapper.mapToDomainModel(pokemonDao.get(it) as DbPokemon)
+        }
+    }
+
+    private suspend fun fetchAndPersistPokemon(id: Int) {
+        val apiPokemon = pokeApi.getPokemon(id)
+        val poke = apiMapper.mapToDomainModel(apiPokemon)
+        pokemonDao.insert(dbMapper.mapToEntity(poke))
+    }
+
+    private suspend fun pokeNeedsToBeFetched(id: Int): Boolean = pokemonDao.get(id) == null
+    private suspend fun evoNeedsToBeFetched(id: Int): Boolean = pokemonEvoDao.get(id) == null
+    private suspend fun speciesNeedsToBeFetched(id: Int): Boolean = pokemonSpeciesDao.get(id) == null
 }
 
 
