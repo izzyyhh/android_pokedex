@@ -36,7 +36,7 @@ import com.google.accompanist.imageloading.ImageLoadState
 fun PokemonListScreen(pokemonItems: LazyPagingItems<Pokemon>, listState: LazyListState){
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         Text(
             text = "Pokédex",

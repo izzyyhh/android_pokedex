@@ -15,11 +15,12 @@ private val DarkColorPalette = darkColors(
 
 private val LightColorPalette = lightColors(
     primary = PokedexRed,
+    onPrimary = Color.White,
     primaryVariant = Purple700,
     secondary = Color.DarkGray,
     onSurface = PokedexRed,
+    background = Color.White,
     onBackground = TextGray,
-    onPrimary = Color.White
 
     /* Other default colors to override
     background = Color.White,
