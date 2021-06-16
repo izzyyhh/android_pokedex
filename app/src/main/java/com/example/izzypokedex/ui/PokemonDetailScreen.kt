@@ -113,7 +113,8 @@ fun PokemonDetailWrapper(pokemon: Pokemon) {
                 .fillMaxHeight(0.58f)
                 .fillMaxWidth()
                 .align(BottomCenter)
-                .clip(RoundedCornerShape(topStartPercent = 8, topEndPercent = 8)),
+                .clip(RoundedCornerShape(topStartPercent = 8, topEndPercent = 8))
+                .background(color = MaterialTheme.colors.background),
         ) {
             Box(
                 modifier = Modifier
@@ -172,6 +173,7 @@ fun PokemonDetail(pokemon: Pokemon) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(color = MaterialTheme.colors.background)
             .padding(vertical = 8.dp, horizontal = 24.dp)
     ) {
         Row(
@@ -186,7 +188,7 @@ fun PokemonDetail(pokemon: Pokemon) {
                     modifier = Modifier
                         .width(100.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.background,
+                        backgroundColor = MaterialTheme.colors.onSecondary,
                         contentColor =  pokemon.color()),
                     elevation = ButtonDefaults.elevation(defaultElevation = 8.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp)
