@@ -10,4 +10,6 @@ data class DbPokemonSpecies(
     val text: String,
     val color: String,
     val evoChainId: Int,
+    val happiness: Int,
+    val captureRate: Int,
 )

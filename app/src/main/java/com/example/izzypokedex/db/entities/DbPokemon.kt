@@ -10,5 +10,13 @@ data class DbPokemon(
     val frontShiny: String,
     val frontOfficialDefault: String,
     val type1: String,
-    val type2: String
+    val type2: String,
+    val height: Int,
+    val weight: Int,
+    val hp: Int,
+    val attack: Int,
+    val defense: Int,
+    val specialAttack: Int,
+    val specialDefense: Int,
+    val speed: Int
 )

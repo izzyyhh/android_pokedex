@@ -36,6 +36,15 @@ class PokemonRepository
     private val pokemonSpeciesDao: PokemonSpeciesDao,
     private val pokemonEvoDao: PokemonEvoDao
 ){
+    @ExperimentalPagingApi
+    fun getPaging(size: Int): Flow<PagingData<Pokemon>> = Pager(
+        config = PagingConfig(pageSize = size),
+        pagingSourceFactory = { pokemonDao.getPaging() },
+        remoteMediator = PokemonListRemoteMediator(pokeApi = pokeApi, pokemonDao = pokemonDao, apiMapper = apiMapper, dbMapper = dbMapper)
+    ).flow.map {
+        it.map{ dbPokemon -> dbMapper.mapToDomainModel(entity = dbPokemon)}
+    }
+
     suspend fun getPokemon(pokeId: Int): Flow<DataState<Pokemon>> = flow {
         emit(DataState.Loading)
 
@@ -78,11 +87,11 @@ class PokemonRepository
 
         try {
             val apiSpecies: ApiPokemonSpecies = pokeApi.getPokemonSpecies(id)
-            val evoChainId = getIdFromUrl(apiSpecies.evolutionChain.url)
-            //save species
-            pokemonSpeciesDao.insert(apiMapper.mapApiSpeciesToDbSpecies(apiSpecies))
-
             val apiPoke: ApiPokemon = pokeApi.getPokemon(id)
+            val evoChainId = getIdFromUrl(apiSpecies.evolutionChain.url)
+
+            // TODO("persist like evochain for better caching")
+            pokemonSpeciesDao.insert(apiMapper.mapApiSpeciesToDbSpecies(apiSpecies))
 
             val evoChain = if(evoNeedsToBeFetched(evoChainId)) fetchAndPersistEvoChain(evoChainId) else getEvoChainFromDb(evoChainId)
 
@@ -118,15 +127,6 @@ class PokemonRepository
         }
     }
 
-    @ExperimentalPagingApi
-    fun getPaging(size: Int): Flow<PagingData<Pokemon>> = Pager(
-        config = PagingConfig(pageSize = size),
-        pagingSourceFactory = { pokemonDao.getPaging() },
-        remoteMediator = PokemonListRemoteMediator(pokeApi = pokeApi, pokemonDao = pokemonDao, apiMapper = apiMapper, dbMapper = dbMapper)
-    ).flow.map {
-        it.map{ dbPokemon -> dbMapper.mapToDomainModel(entity = dbPokemon)}
-    }
-
     private suspend fun fetchAndPersistEvoChain(evoChainId: Int): List<Pokemon> {
         val apiEvo: ApiPokeEvoChain = pokeApi.getPokeEvoChain(evoChainId)
         pokemonEvoDao.insert(apiMapper.mapApiEvoToDbEvo(apiEvo))
@@ -154,8 +154,14 @@ class PokemonRepository
         }
     }
 
+    private suspend fun fetchAndPersistPokemon(id: Int) {
+        val apiPokemon = pokeApi.getPokemon(id)
+        val poke = apiMapper.mapToDomainModel(apiPokemon)
+        pokemonDao.insert(dbMapper.mapToEntity(poke))
+    }
+
     private suspend fun getEvoChainFromDb(evoChainId: Int): List<Pokemon> {
-        val evoChain: DbEvoChain = pokemonEvoDao.get(evoChainId)
+        val evoChain: DbEvoChain = pokemonEvoDao.get(evoChainId) as DbEvoChain
         val evoChainList = listOfNotNull(
             evoChain.stage1,
             evoChain.stage2,
@@ -171,12 +177,6 @@ class PokemonRepository
         return evoChainList.map {
             dbMapper.mapToDomainModel(pokemonDao.get(it) as DbPokemon)
         }
-    }
-
-    private suspend fun fetchAndPersistPokemon(id: Int) {
-        val apiPokemon = pokeApi.getPokemon(id)
-        val poke = apiMapper.mapToDomainModel(apiPokemon)
-        pokemonDao.insert(dbMapper.mapToEntity(poke))
     }
 
     private suspend fun pokeNeedsToBeFetched(id: Int): Boolean = pokemonDao.get(id) == null

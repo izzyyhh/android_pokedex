@@ -45,7 +45,9 @@ constructor() : EntityMapper<ApiPokemon, Pokemon>{
             id = apiSpecies.id,
             text = apiSpecies.textEntries.filter { it.language.name == "en" }[0].text,
             color = apiSpecies.color.name,
-            evoChainId = getIdFromUrl(apiSpecies.evolutionChain.url)
+            evoChainId = getIdFromUrl(apiSpecies.evolutionChain.url),
+            happiness = apiSpecies.happiness,
+            captureRate = apiSpecies.captureRate
         )
     }
 

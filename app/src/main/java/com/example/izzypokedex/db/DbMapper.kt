@@ -30,7 +30,15 @@ constructor() : EntityMapper<DbPokemon, Pokemon>{
             frontShiny = domainModel.frontShiny,
             frontOfficialDefault = domainModel.frontOfficialDefault,
             type1 = domainModel.types[0],
-            type2 = if(domainModel.types.size > 1) domainModel.types[1] else ""
+            type2 = if(domainModel.types.size > 1) domainModel.types[1] else "",
+            height = domainModel.height,
+            weight = domainModel.weight,
+            hp = domainModel.stats.hp,
+            attack = domainModel.stats.attack,
+            defense = domainModel.stats.defense,
+            speed = domainModel.stats.speed,
+            specialDefense = domainModel.stats.specialDefense,
+            specialAttack = domainModel.stats.specialAttack
         )
     }
 

@@ -9,7 +9,7 @@ import com.example.izzypokedex.db.entities.DbEvoChain
 @Dao
 interface PokemonEvoDao {
     @Query("SELECT * FROM pokemon_evo WHERE id = :id")
-    suspend fun get(id: Int): DbEvoChain
+    suspend fun get(id: Int): DbEvoChain?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg evoChain: DbEvoChain)
